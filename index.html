@@ -61,7 +61,31 @@
       inset: 0;
       background-size: cover;
       background-position: center;
+      animation: kenBurns 12s ease-out forwards;
     }
+
+    @keyframes kenBurns {
+      from { transform: scale(1.08); }
+      to   { transform: scale(1.00); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-edition,
+    .hero-title,
+    .hero-subtitle,
+    .hero-badges {
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards;
+    }
+
+    .hero-edition  { animation-delay: 0.4s; }
+    .hero-title    { animation-delay: 0.75s; }
+    .hero-subtitle { animation-delay: 1.1s; }
+    .hero-badges   { animation-delay: 1.4s; }
 
     .hero-overlay {
       position: absolute;
@@ -218,12 +242,27 @@
       width: 2px;
       background: linear-gradient(to bottom, var(--gold) 0%, var(--accent-dk) 100%);
       border-radius: 2px;
+      transform-origin: top center;
+      transform: scaleY(0);
+      transition: transform 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .timeline.line-visible::before {
+      transform: scaleY(1);
     }
 
     /* ── Timeline item (wraps time label + card) ── */
     .timeline-item {
       position: relative;
       margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .timeline-item.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* dot on the line */
@@ -382,6 +421,17 @@
 
     .card-map-btn:hover  { background: #6b3e24; }
     .card-map-btn:active { transform: scale(0.96); }
+
+    .shop-card {
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .shop-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 32px rgba(45,31,20,0.16);
+    }
+    .shop-card:active {
+      transform: translateY(-2px);
+    }
 
     /* ── Notes ── */
     .notes-wrap {
@@ -659,6 +709,30 @@
       li.className = 'notes-item';
       li.innerHTML = `<span class="notes-icon">⚠️</span><span>${note}</span>`;
       notesList.appendChild(li);
+    });
+
+    // ── Scroll animations ──────────────────────
+    // ② 縦線を上から伸ばす
+    const timelineContainer = document.getElementById('timeline');
+    new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        timelineContainer.classList.add('line-visible');
+      }
+    }, { threshold: 0.05 }).observe(timelineContainer);
+
+    // ① カードを1枚ずつフェードイン
+    const cardObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          cardObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+
+    document.querySelectorAll('.timeline-item').forEach((item, i) => {
+      item.style.transitionDelay = `${i * 0.1}s`;
+      cardObserver.observe(item);
     });
 
     // Footer
