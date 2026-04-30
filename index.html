@@ -206,18 +206,48 @@
     /* ── Timeline ── */
     .timeline {
       position: relative;
-      padding-left: 44px;
+      padding-left: 36px;
     }
 
     .timeline::before {
       content: '';
       position: absolute;
-      left: 18px;
+      left: 14px;
       top: 6px;
       bottom: 32px;
       width: 2px;
       background: linear-gradient(to bottom, var(--gold) 0%, var(--accent-dk) 100%);
       border-radius: 2px;
+    }
+
+    /* ── Timeline item (wraps time label + card) ── */
+    .timeline-item {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    /* dot on the line */
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 0 2px var(--accent);
+      left: -28px;
+      top: 4px;
+    }
+
+    /* time label — sits above the card, to the right of the line */
+    .timeline-time-label {
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-mid);
+      margin-bottom: 6px;
+      padding-left: 2px;
+      white-space: nowrap;
     }
 
     /* ── Shop Card ── */
@@ -227,22 +257,7 @@
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
       padding: 20px 20px 18px;
-      margin-bottom: 24px;
       box-shadow: var(--shadow);
-    }
-
-    /* timeline dot */
-    .shop-card::before {
-      content: '';
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: 2px solid var(--card-bg);
-      box-shadow: 0 0 0 2px var(--accent);
-      left: -32px;
-      top: 24px;
     }
 
     /* left accent bar */
@@ -429,11 +444,8 @@
 
     /* ── Responsive ── */
     @media (max-width: 380px) {
-      .card-top    { flex-direction: column; gap: 4px; }
-      .card-order  { font-size: 2rem; }
-      .timeline    { padding-left: 36px; }
-      .timeline::before { left: 14px; }
-      .shop-card::before { left: -26px; }
+      .card-top   { flex-direction: column; gap: 4px; }
+      .card-order { font-size: 2rem; }
     }
   </style>
 </head>
@@ -488,9 +500,9 @@
       edition:   '',
       pageTitle: '大船 昼飲みプラン',
       subtitle:  '大船でいい感じに飲みましょう',
-      date:      '日程調整中',                  // 例: '2025年6月15日（日）'
+      date:      '5/3（仮）',
       members:   '2名',
-      startTime: '12:00スタート',
+      startTime: '12:00スタート（仮）',
       heroImage: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=1200&q=80',
       footerMsg: '',
       createdAt: '2026年4月',
@@ -599,13 +611,19 @@
     // Timeline cards
     const timeline = document.getElementById('timeline');
     shops.forEach((shop, i) => {
+      const item = document.createElement('div');
+      item.className = 'timeline-item';
+
+      const timeEl = document.createElement('div');
+      timeEl.className = 'timeline-time-label';
+      timeEl.textContent = shop.time;
+
       const card = document.createElement('article');
       card.className = 'shop-card';
       card.innerHTML = `
         <div class="card-top">
           <div class="card-order">${orderNums[i]}</div>
           <div class="card-info">
-            <span class="card-time">🕐 ${shop.time}</span>
             <div class="card-name">${shop.name}</div>
             <span class="card-genre">${shop.genre}</span>
           </div>
@@ -628,7 +646,10 @@
           </a>
         </div>
       `;
-      timeline.appendChild(card);
+
+      item.appendChild(timeEl);
+      item.appendChild(card);
+      timeline.appendChild(item);
     });
 
     // Notes
