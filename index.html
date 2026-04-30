@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大船 昼飲みプラン</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Design Tokens ── */
+    :root {
+      --bg:           #f0e8d8;
+      --card-bg:      #fdf8f1;
+      --card-border:  #ddc9a8;
+      --text:         #2d1f14;
+      --text-mid:     #7a5840;
+      --text-light:   #a08870;
+      --accent:       #bf7a2a;
+      --accent-dk:    #8b5230;
+      --gold:         #c8940a;
+      --warn-text:    #c05010;
+      --warn-bg:      #fff5ec;
+      --warn-border:  #e8b07a;
+      --radius:       16px;
+      --shadow:       0 4px 20px rgba(45,31,20,0.10);
+    }
+
+    /* ── Base ── */
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse at 15% 40%, rgba(200,148,10,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 15%, rgba(139,82,48,0.07) 0%, transparent 50%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ══════════════════════════════
+       HERO
+    ══════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 60px 24px 100px;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        170deg,
+        rgba(12, 6, 2, 0.48) 0%,
+        rgba(28, 12, 4, 0.72) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 520px;
+    }
+
+    .hero-edition {
+      display: inline-block;
+      font-family: 'Caveat', cursive;
+      font-size: 1.15rem;
+      color: rgba(255, 215, 120, 0.9);
+      letter-spacing: 0.2em;
+      margin-bottom: 14px;
+    }
+
+    .hero-title {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(3.4rem, 14vw, 5.8rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.05;
+      text-shadow: 0 3px 24px rgba(0, 0, 0, 0.55);
+      margin-bottom: 20px;
+      white-space: pre-line;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(0.9rem, 3.5vw, 1.15rem);
+      color: rgba(240, 220, 190, 0.92);
+      letter-spacing: 0.06em;
+      margin-bottom: 36px;
+    }
+
+    .hero-badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .hero-badge {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.95);
+      padding: 7px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      color: rgba(255, 255, 255, 0.45);
+      font-size: 0.72rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.12em;
+      animation: scrollBounce 2.2s ease-in-out infinite;
+    }
+
+    .hero-scroll-arrow {
+      font-size: 1rem;
+    }
+
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(7px); }
+    }
+
+    /* ══════════════════════════════
+       ROUTE STRIP
+    ══════════════════════════════ */
+    .route-strip {
+      background: var(--accent-dk);
+      padding: 13px 20px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .route-strip::-webkit-scrollbar { display: none; }
+
+    .route-strip-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-width: max-content;
+      margin: 0 auto;
+      max-width: 640px;
+    }
+
+    .route-stop {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
+      white-space: nowrap;
+    }
+
+    .route-arrow {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.85rem;
+    }
+
+    /* ══════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════ */
+    .main {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 52px 20px 40px;
+    }
+
+    .section-heading {
+      font-family: 'Caveat', cursive;
+      font-size: 2rem;
+      color: var(--accent-dk);
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      position: relative;
+      padding-left: 44px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 18px;
+      top: 6px;
+      bottom: 32px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--gold) 0%, var(--accent-dk) 100%);
+      border-radius: 2px;
+    }
+
+    /* ── Shop Card ── */
+    .shop-card {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px 20px 18px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    /* timeline dot */
+    .shop-card::before {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--card-bg);
+      box-shadow: 0 0 0 2px var(--accent);
+      left: -32px;
+      top: 24px;
+    }
+
+    /* left accent bar */
+    .shop-card::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 18px;
+      bottom: 18px;
+      width: 3px;
+      background: var(--gold);
+      border-radius: 0 3px 3px 0;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .card-order {
+      font-family: 'Caveat', cursive;
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      min-width: 2.2rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .card-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--text-mid);
+      background: #f0e4d0;
+      border-radius: 999px;
+      padding: 2px 10px;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .card-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .card-genre {
+      display: inline-block;
+      font-size: 0.7rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 999px;
+      padding: 2px 10px;
+      margin-top: 5px;
+      letter-spacing: 0.04em;
+    }
+
+    .card-address {
+      display: flex;
+      gap: 4px;
+      align-items: flex-start;
+      font-size: 0.8rem;
+      color: var(--text-mid);
+      margin: 10px 0 8px;
+    }
+
+    .card-address-icon { flex-shrink: 0; }
+
+    .card-desc {
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .card-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--warn-text);
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      border-radius: 999px;
+      padding: 4px 12px;
+    }
+
+    .card-map-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--accent-dk);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 7px 18px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: background 0.2s, transform 0.1s;
+      margin-left: auto;
+    }
+
+    .card-map-btn:hover  { background: #6b3e24; }
+    .card-map-btn:active { transform: scale(0.96); }
+
+    /* ── Notes ── */
+    .notes-wrap {
+      margin-top: 52px;
+    }
+
+    .notes-box {
+      background: var(--warn-bg);
+      border: 1.5px solid var(--warn-border);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .notes-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .notes-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .notes-icon { flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 48px 20px 60px;
+      margin-top: 24px;
+    }
+
+    .footer::before {
+      content: '';
+      display: block;
+      width: 64px;
+      height: 2px;
+      background: var(--card-border);
+      margin: 0 auto 32px;
+      border-radius: 999px;
+    }
+
+    .footer-cheers {
+      font-family: 'Caveat', cursive;
+      font-size: 2.1rem;
+      color: var(--accent-dk);
+      margin-bottom: 10px;
+    }
+
+    .footer-date {
+      font-size: 0.78rem;
+      color: var(--text-light);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 380px) {
+      .card-top    { flex-direction: column; gap: 4px; }
+      .card-order  { font-size: 2rem; }
+      .timeline    { padding-left: 36px; }
+      .timeline::before { left: 14px; }
+      .shop-card::before { left: -26px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══ Hero ══ -->
+  <section class="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-edition" id="heroEdition"></span>
+      <h1 class="hero-title" id="heroTitle"></h1>
+      <p class="hero-subtitle" id="heroSubtitle"></p>
+      <div class="hero-badges" id="heroBadges"></div>
+    </div>
+    <div class="hero-scroll">
+      <span>SCROLL</span>
+      <span class="hero-scroll-arrow">▼</span>
+    </div>
+  </section>
+
+  <!-- ══ Route Strip ══ -->
+  <div class="route-strip">
+    <div class="route-strip-inner" id="routeStrip"></div>
+  </div>
+
+  <!-- ══ Main ══ -->
+  <main class="main">
+    <h2 class="section-heading">✦ ルート ✦</h2>
+    <div class="timeline" id="timeline"></div>
+
+    <div class="notes-wrap">
+      <h2 class="section-heading">⚠ 注意事項</h2>
+      <div class="notes-box">
+        <ul class="notes-list" id="notesList"></ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══ Footer ══ -->
+  <footer class="footer">
+    <p class="footer-cheers" id="footerCheers"></p>
+    <p class="footer-date"   id="footerDate"></p>
+  </footer>
+
+  <script>
+    /* ════════════════════════════════════════
+       CONFIG — 第2弾はここの値を差し替えるだけ
+    ════════════════════════════════════════ */
+    const CONFIG = {
+      edition:   '',
+      pageTitle: '大船 昼飲みプラン',
+      subtitle:  '大船でいい感じに飲みましょう',
+      date:      '日程調整中',                  // 例: '2025年6月15日（日）'
+      members:   '2名',
+      startTime: '12:00スタート',
+      heroImage: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=1200&q=80',
+      footerMsg: '',
+      createdAt: '2026年4月',
+    };
+
+    /* ════════════════════════════════════════
+       SHOP DATA — 第2弾は shops 配列だけ差し替え
+    ════════════════════════════════════════ */
+    const shops = [
+      {
+        order: 1,
+        time: '12:00 〜 12:45',
+        name: '立ち呑み処 まるま',
+        genre: '立ち飲み',
+        address: '鎌倉市大船1-11-10（東口 仲通り商店街）',
+        description: '仲通り商店街にある格安立ち飲み店。料理は200〜400円とリーズナブルで、昼から開いている頼れる1軒目。',
+        mapUrl: 'https://maps.google.com/?q=立ち呑み処+まるま+大船',
+      },
+      {
+        order: 2,
+        time: '12:45 〜 13:30',
+        name: 'Yeah! Yeah! Yeah!',
+        genre: '立ち飲み',
+        address: '鎌倉市大船1-19-20 赤坂ビル1F（東口 徒歩3分）',
+        description: '商店街沿いにある立ち呑み。ランチから昼飲みまで対応。まるまと同エリアなのでスムーズに移動できる。',
+        mapUrl: 'https://maps.google.com/?q=Yeah+Yeah+Yeah+大船',
+      },
+      {
+        order: 3,
+        time: '13:30 〜 14:30',
+        name: '炭火串焼と旬鮮料理の店 富の市',
+        genre: '炭火串焼き',
+        address: '鎌倉市大船1-10-10 まるみビル2F（湘南モノレール大船駅 徒歩1分）',
+        description: '炭火で焼いた本格串焼きと旬の料理が揃う2F店。立ち飲み2軒の後、腰を落ち着けてしっかり飲む。',
+        mapUrl: 'https://maps.google.com/?q=富の市+大船',
+        note: '月曜定休',
+      },
+      {
+        order: 4,
+        time: '14:30 〜 16:00',
+        name: '大船一丁目やきとん',
+        genre: 'やきとん',
+        address: '鎌倉市大船1-26-33 片岡ビル1F（笠間口 徒歩1分）',
+        description: '焼きとん100円・ホッピーセット270円のコスパ抜群店。笠間口側に移動して、焼きとんで気持ちよく締め。',
+        mapUrl: 'https://maps.google.com/?q=大船一丁目やきとん',
+      },
+    ];
+
+    /* ════════════════════════════════════════
+       NOTES
+    ════════════════════════════════════════ */
+    const notes = [
+      '富の市は <strong>月曜定休</strong> です。訪問前に曜日を確認しておきましょう。',
+      '大船一丁目やきとんは <strong>笠間口（西口）側</strong>。他の3軒とは駅を挟んで反対側になるため、移動に5〜10分かかります。',
+    ];
+
+    /* ════════════════════════════════════════
+       RENDER
+    ════════════════════════════════════════ */
+    const orderNums = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧'];
+
+    // document.title
+    document.title = CONFIG.edition
+      ? `大船 昼飲みプラン — ${CONFIG.edition}`
+      : '大船 昼飲みプラン';
+
+    // Hero
+    document.getElementById('heroBg').style.backgroundImage = `url('${CONFIG.heroImage}')`;
+    const editionEl = document.getElementById('heroEdition');
+    if (CONFIG.edition) {
+      editionEl.textContent = CONFIG.edition;
+    } else {
+      editionEl.remove();
+    }
+    document.getElementById('heroTitle').textContent   = CONFIG.pageTitle;
+    document.getElementById('heroSubtitle').textContent = CONFIG.subtitle;
+
+    const badgesData = [
+      { label: `🍺 ${CONFIG.members}` },
+      { label: `📅 ${CONFIG.date}` },
+      { label: `🕛 ${CONFIG.startTime}` },
+    ];
+    const heroBadges = document.getElementById('heroBadges');
+    badgesData.forEach(b => {
+      const el = document.createElement('span');
+      el.className   = 'hero-badge';
+      el.textContent = b.label;
+      heroBadges.appendChild(el);
+    });
+
+    // Route strip
+    const routeStrip = document.getElementById('routeStrip');
+    shops.forEach((shop, i) => {
+      const stop = document.createElement('span');
+      stop.className   = 'route-stop';
+      stop.textContent = shop.name;
+      routeStrip.appendChild(stop);
+      if (i < shops.length - 1) {
+        const arrow = document.createElement('span');
+        arrow.className   = 'route-arrow';
+        arrow.textContent = '→';
+        routeStrip.appendChild(arrow);
+      }
+    });
+
+    // Timeline cards
+    const timeline = document.getElementById('timeline');
+    shops.forEach((shop, i) => {
+      const card = document.createElement('article');
+      card.className = 'shop-card';
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-order">${orderNums[i]}</div>
+          <div class="card-info">
+            <span class="card-time">🕐 ${shop.time}</span>
+            <div class="card-name">${shop.name}</div>
+            <span class="card-genre">${shop.genre}</span>
+          </div>
+        </div>
+        <div class="card-address">
+          <span class="card-address-icon">📍</span>
+          <span>${shop.address}</span>
+        </div>
+        <p class="card-desc">${shop.description}</p>
+        <div class="card-footer">
+          ${shop.note
+            ? `<span class="card-note">⚠ ${shop.note}</span>`
+            : '<span></span>'
+          }
+          <a class="card-map-btn"
+             href="${shop.mapUrl}"
+             target="_blank"
+             rel="noopener noreferrer">
+            🗺 マップで見る
+          </a>
+        </div>
+      `;
+      timeline.appendChild(card);
+    });
+
+    // Notes
+    const notesList = document.getElementById('notesList');
+    notes.forEach(note => {
+      const li = document.createElement('li');
+      li.className = 'notes-item';
+      li.innerHTML = `<span class="notes-icon">⚠️</span><span>${note}</span>`;
+      notesList.appendChild(li);
+    });
+
+    // Footer
+    const cheersEl = document.getElementById('footerCheers');
+    if (CONFIG.footerMsg) {
+      cheersEl.textContent = CONFIG.footerMsg;
+    } else {
+      cheersEl.remove();
+    }
+    document.getElementById('footerDate').textContent = `作成: ${CONFIG.createdAt}`;
+  </script>
+</body>
+</html>
